@@ -23,7 +23,9 @@ const useDataApi = (initialUrl, initialData) => {
     isError: false,
     data: initialData,
   });
+
   console.log(`useDataApi called`);
+
   useEffect(() => {
     console.log("useEffect Called");
     let didCancel = false;
@@ -50,6 +52,7 @@ const useDataApi = (initialUrl, initialData) => {
   }, [url]);
   return [state, setUrl];
 };
+
 const dataFetchReducer = (state, action) => {
   switch (action.type) {
     case "FETCH_INIT":
@@ -91,6 +94,7 @@ const Products = (props) => {
       data: [],
     }
   );
+
   console.log(`Rendering Products ${JSON.stringify(data)}`);
   // Fetch Data
   const addToCart = (e) => {
@@ -107,10 +111,18 @@ const Products = (props) => {
     setCart([...cart, ...item]);
     //doFetch(query);
   };
-  const deleteCartItem = (index) => {
-    let newCart = cart.filter((item, i) => index !== i);
+
+  const deleteCartItem = (delIndex) => {
+    let newCart = cart.filter((item, i) => delIndex !== i);
+    let target = cart.filter((item, index) => delIndex === index);
+    let newItems = items.map((item, index) => {
+      if (item.name === target[0].name) item.instock += 1;
+      return item;
+    });
     setCart(newCart);
+    setItems(newItems);
   };
+
   const photos = ["apple.png", "orange.png", "beans.png", "cabbage.png"];
 
   let list = items.map((item, index) => {
@@ -134,6 +146,7 @@ const Products = (props) => {
       </li>
     );
   });
+
   let cartList = cart.map((item, index) => {
     return (
       <Accordion.Item key={1 + index} eventKey={1 + index}>
@@ -167,6 +180,7 @@ const Products = (props) => {
     console.log(`total updated to ${newTotal}`);
     return newTotal;
   };
+
   const restockProducts = (url) => {
     doFetch(url);
     let newItems = data.map((item) => {
